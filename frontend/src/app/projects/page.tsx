@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { Users, Plus, Clock, Trash2, Edit } from "lucide-react";
 import { Navbar } from "@/components/navbar";
+import { AddCourseDialog } from "@/components/add-course-dialog";
 import { api } from "@/lib/api";
 import { toast } from "react-hot-toast";
 
@@ -411,6 +412,12 @@ export default function ProjectsPage() {
                   ))}
                 </SelectContent>
               </Select>
+              <AddCourseDialog
+                onCourseAdded={(newCourse) => {
+                  setCourses([...courses, newCourse]);
+                  setFormData({ ...formData, course_id: newCourse.id.toString() });
+                }}
+              />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="due_date">Due Date</Label>
@@ -490,6 +497,12 @@ export default function ProjectsPage() {
                   ))}
                 </SelectContent>
               </Select>
+              <AddCourseDialog
+                onCourseAdded={(newCourse) => {
+                  setCourses([...courses, newCourse]);
+                  setFormData({ ...formData, course_id: newCourse.id.toString() });
+                }}
+              />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="edit-due_date">Due Date</Label>

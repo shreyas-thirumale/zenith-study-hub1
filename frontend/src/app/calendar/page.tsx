@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Calendar, Plus, Trash2 } from 'lucide-react'
 import { CalendarView } from '@/components/calendar-view'
 import { Navbar } from '@/components/navbar'
+import { AddCourseDialog } from '@/components/add-course-dialog'
 import { api } from '@/lib/api'
 import { toast } from 'react-hot-toast'
 
@@ -24,8 +25,16 @@ interface CalendarEvent {
   course_id?: number
 }
 
+interface Course {
+  id: number
+  name: string
+  code: string
+  color: string
+}
+
 export default function CalendarPage() {
   const [events, setEvents] = useState<CalendarEvent[]>([])
+  const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -34,12 +43,23 @@ export default function CalendarPage() {
     description: '',
     date: '',
     time: '',
-    type: 'assignment'
+    type: 'assignment',
+    course_id: ''
   })
 
   useEffect(() => {
     loadEvents()
+    loadCourses()
   }, [])
+
+  const loadCourses = async () => {
+    try {
+      const response = await api.get('/courses')
+      setCourses(response.data)
+    } catch (error) {
+      console.error('Error loading courses:', error)
+    }
+  }
 
   const loadEvents = async () => {
     try {
@@ -65,8 +85,12 @@ export default function CalendarPage() {
     }
 
     try {
-      console.log('Creating event:', formData)
-      const response = await api.post('/calendar', formData)
+      const eventData = {
+        ...formData,
+        course_id: formData.course_id && formData.course_id !== "none" ? parseInt(formData.course_id) : null
+      }
+      console.log('Creating event:', eventData)
+      const response = await api.post('/calendar', eventData)
       console.log('Event created:', response.data)
       setEvents([...events, response.data])
       toast.success('Event added successfully!')
@@ -76,7 +100,8 @@ export default function CalendarPage() {
         description: '',
         date: '',
         time: '',
-        type: 'assignment'
+        type: 'assignment',
+        course_id: ''
       })
     } catch (error: any) {
       console.error('Error creating event:', error)
@@ -300,6 +325,34 @@ export default function CalendarPage() {
                     <SelectItem value="custom">Custom</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="course">Course</Label>
+                <Select
+                  value={formData.course_id || "none"}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, course_id: value === "none" ? "" : value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a course" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No course</SelectItem>
+                    {courses.map((course) => (
+                      <SelectItem key={course.id} value={course.id.toString()}>
+                        {course.name} ({course.code})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <AddCourseDialog
+                  onCourseAdded={(newCourse) => {
+                    setCourses([...courses, newCourse]);
+                    setFormData({ ...formData, course_id: newCourse.id.toString() });
+                  }}
+                />
               </div>
 
               <div className="space-y-2">
