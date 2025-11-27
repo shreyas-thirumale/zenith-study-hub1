@@ -28,9 +28,18 @@ app.use(express.urlencoded({ extended: true }));
 // Simple auth middleware - extracts userId from token
 const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization?.replace('Bearer ', '');
-  if (token && token.startsWith('session-')) {
+  
+  if (!token || token === 'null' || token === 'undefined') {
+    // No token - use demo mode with userId 0
+    req.userId = 0;
+    next();
+  } else if (token.startsWith('session-')) {
     // Extract userId from session token
     req.userId = parseInt(token.replace('session-', ''));
+    next();
+  } else if (token === 'mock-jwt-token-123') {
+    // Legacy token support
+    req.userId = 1;
     next();
   } else {
     res.status(401).json({ error: 'Unauthorized' });
