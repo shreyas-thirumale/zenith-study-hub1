@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar, Users, Focus, BookOpen } from "lucide-react";
 import { Navbar } from "@/components/navbar";
+import { api } from "@/lib/api";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -30,13 +31,60 @@ export default function DashboardPage() {
   }, []);
 
   const loadDashboardStats = async () => {
-    // This would fetch real data from your API
-    setStats({
-      upcomingEvents: 5,
-      activeProjects: 3,
-      focusHours: 12,
-      courses: 4,
-    });
+    try {
+      // Fetch real data from API
+      const [eventsRes, projectsRes, sessionsRes, coursesRes] = await Promise.all([
+        api.get('/calendar').catch(() => ({ data: [] })),
+        api.get('/projects').catch(() => ({ data: [] })),
+        api.get('/focus/sessions').catch(() => ({ data: [] })),
+        api.get('/courses').catch(() => ({ data: [] })),
+      ]);
+
+      const events = eventsRes.data;
+      const projects = projectsRes.data;
+      const sessions = sessionsRes.data;
+      const courses = coursesRes.data;
+
+      // Calculate upcoming events (next 7 days)
+      const today = new Date();
+      const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+      const upcomingEvents = Array.isArray(events) 
+        ? events.filter((e: any) => {
+            const eventDate = new Date(e.date);
+            return eventDate >= today && eventDate <= nextWeek;
+          }).length 
+        : 0;
+
+      // Count active projects
+      const activeProjects = Array.isArray(projects)
+        ? projects.filter((p: any) => p.status === 'active').length
+        : 0;
+
+      // Calculate focus hours this week
+      const weekStart = new Date(today);
+      weekStart.setDate(today.getDate() - today.getDay());
+      const focusHours = Array.isArray(sessions)
+        ? sessions
+            .filter((s: any) => new Date(s.started_at) >= weekStart)
+            .reduce((total: number, s: any) => total + (s.duration || 0), 0) / 3600
+        : 0;
+
+      setStats({
+        upcomingEvents,
+        activeProjects,
+        focusHours: Math.round(focusHours),
+        courses: Array.isArray(courses) ? courses.length : 0,
+      });
+    } catch (error) {
+      console.error('Error loading dashboard stats:', error);
+      // Keep stats at 0 if there's an error
+      setStats({
+        upcomingEvents: 0,
+        activeProjects: 0,
+        focusHours: 0,
+        courses: 0,
+      });
+    }
   };
 
   return (
@@ -157,37 +205,37 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                Recent Activity
+                Getting Started
               </CardTitle>
-              <CardDescription>Your latest updates</CardDescription>
+              <CardDescription>Tips to maximize your productivity</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center space-x-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors duration-200 animate-fade-in animate-stagger-1">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium">
-                      Math Assignment due tomorrow
+                      Add your courses to organize assignments
                     </p>
-                    <p className="text-xs text-muted-foreground">2 hours ago</p>
+                    <p className="text-xs text-muted-foreground">Start by creating courses</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors duration-200 animate-fade-in animate-stagger-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium">
-                      Completed 2-hour focus session
+                      Track deadlines in the calendar
                     </p>
-                    <p className="text-xs text-muted-foreground">4 hours ago</p>
+                    <p className="text-xs text-muted-foreground">Never miss an assignment</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors duration-200 animate-fade-in animate-stagger-3">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium">
-                      New project created: CS Group Project
+                      Use focus sessions to stay productive
                     </p>
-                    <p className="text-xs text-muted-foreground">1 day ago</p>
+                    <p className="text-xs text-muted-foreground">Track your study time</p>
                   </div>
                 </div>
               </div>
