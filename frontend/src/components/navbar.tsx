@@ -8,10 +8,9 @@ import { GraduationCap, LogOut, User } from "lucide-react";
 
 interface NavbarProps {
   title?: string;
-  showBackButton?: boolean;
 }
 
-export function Navbar({ title, showBackButton = false }: NavbarProps) {
+export function Navbar({ title }: NavbarProps) {
   const router = useRouter();
   const { user, logout } = useAuthStore();
 
