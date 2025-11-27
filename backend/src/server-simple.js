@@ -61,8 +61,20 @@ app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
 
   if (email && password) {
+    // Find or create user (simplified for demo)
+    let user = users.find(u => u.email === email);
+    if (!user) {
+      user = {
+        id: users.length + 1,
+        email,
+        name: email.split('@')[0],
+        created_at: new Date().toISOString()
+      };
+      users.push(user);
+    }
+    
     res.json({
-      user: { id: 1, email, name: 'Demo User' },
+      user: { id: user.id, email: user.email, name: user.name },
       token: 'mock-jwt-token-123'
     });
   } else {
@@ -74,8 +86,22 @@ app.post('/api/auth/register', (req, res) => {
   const { email, password, name } = req.body;
 
   if (email && password && name) {
+    // Check if user already exists
+    const existingUser = users.find(u => u.email === email);
+    if (existingUser) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+
+    const newUser = {
+      id: users.length + 1,
+      email,
+      name,
+      created_at: new Date().toISOString()
+    };
+    users.push(newUser);
+
     res.status(201).json({
-      user: { id: 1, email, name },
+      user: { id: newUser.id, email: newUser.email, name: newUser.name },
       token: 'mock-jwt-token-123'
     });
   } else {
@@ -329,21 +355,13 @@ app.post('/api/courses', authMiddleware, (req, res) => {
 
 // Syllabus routes
 app.post('/api/syllabus/parse', authMiddleware, (req, res) => {
-  // Mock syllabus parsing
-  const mockParsedData = {
-    course_name: 'Introduction to Computer Science',
-    assignments: [
-      { title: 'Assignment 1: Variables and Data Types', due_date: '2024-11-15' },
-      { title: 'Assignment 2: Control Structures', due_date: '2024-11-22' },
-      { title: 'Final Project', due_date: '2024-12-10' }
-    ],
-    exams: [
-      { title: 'Midterm Exam', date: '2024-11-20' },
-      { title: 'Final Exam', date: '2024-12-15' }
-    ]
-  };
-  
-  res.json(mockParsedData);
+  // Placeholder for future syllabus parsing functionality
+  // In production, this would parse PDF/document files
+  res.json({
+    course_name: '',
+    assignments: [],
+    exams: []
+  });
 });
 
 app.post('/api/syllabus/create-events', authMiddleware, (req, res) => {

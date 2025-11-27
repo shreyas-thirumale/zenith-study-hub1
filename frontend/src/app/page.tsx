@@ -92,7 +92,7 @@ export default function HomePage() {
             <Button
               size="lg"
               className="text-lg px-8 py-4 bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 hover-lift shadow-lg group"
-              onClick={() => router.push("/dashboard")}
+              onClick={() => router.push("/auth/register")}
             >
               Get Started Free
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" />
@@ -101,9 +101,9 @@ export default function HomePage() {
               variant="outline"
               size="lg"
               className="text-lg px-8 py-4 border-2 hover-lift"
-              onClick={() => router.push("/dashboard")}
+              onClick={() => router.push("/auth/login")}
             >
-              Try Demo
+              Sign In
             </Button>
           </div>
 
