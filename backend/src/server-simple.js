@@ -25,11 +25,12 @@ app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Simple auth middleware
+// Simple auth middleware - extracts userId from token
 const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization?.replace('Bearer ', '');
-  if (!token || token === 'mock-jwt-token-123') {
-    req.userId = 1; // Mock user ID
+  if (token && token.startsWith('session-')) {
+    // Extract userId from session token
+    req.userId = parseInt(token.replace('session-', ''));
     next();
   } else {
     res.status(401).json({ error: 'Unauthorized' });
@@ -61,21 +62,18 @@ app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
 
   if (email && password) {
-    // Find or create user (simplified for demo)
-    let user = users.find(u => u.email === email);
-    if (!user) {
-      user = {
-        id: users.length + 1,
-        email,
-        name: email.split('@')[0],
-        created_at: new Date().toISOString()
-      };
-      users.push(user);
-    }
+    // Generate unique session ID for this demo session
+    const sessionId = Date.now() + Math.floor(Math.random() * 1000000);
+    const user = {
+      id: sessionId,
+      email,
+      name: email.split('@')[0],
+      created_at: new Date().toISOString()
+    };
     
     res.json({
       user: { id: user.id, email: user.email, name: user.name },
-      token: 'mock-jwt-token-123'
+      token: `session-${sessionId}`
     });
   } else {
     res.status(400).json({ error: 'Email and password required' });
@@ -86,23 +84,18 @@ app.post('/api/auth/register', (req, res) => {
   const { email, password, name } = req.body;
 
   if (email && password && name) {
-    // Check if user already exists
-    const existingUser = users.find(u => u.email === email);
-    if (existingUser) {
-      return res.status(400).json({ error: 'User already exists' });
-    }
-
+    // Generate unique session ID for this demo session
+    const sessionId = Date.now() + Math.floor(Math.random() * 1000000);
     const newUser = {
-      id: users.length + 1,
+      id: sessionId,
       email,
       name,
       created_at: new Date().toISOString()
     };
-    users.push(newUser);
 
     res.status(201).json({
       user: { id: newUser.id, email: newUser.email, name: newUser.name },
-      token: 'mock-jwt-token-123'
+      token: `session-${sessionId}`
     });
   } else {
     res.status(400).json({ error: 'All fields required' });
