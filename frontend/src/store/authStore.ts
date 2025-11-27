@@ -15,6 +15,7 @@ interface AuthState {
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
   register: (name: string, email: string, password: string) => Promise<void>
+  startDemoSession: () => Promise<void>
   logout: () => void
   setUser: (user: User) => void
 }
@@ -50,6 +51,26 @@ export const useAuthStore = create<AuthState>()(
         set({ isLoading: true })
         try {
           const response = await api.post('/auth/register', { name, email, password })
+          const { user, token } = response.data
+          
+          // Store token in cookie
+          Cookies.set('token', token, { expires: 7 })
+          
+          set({ 
+            user, 
+            isAuthenticated: true, 
+            isLoading: false 
+          })
+        } catch (error) {
+          set({ isLoading: false })
+          throw error
+        }
+      },
+      
+      startDemoSession: async () => {
+        set({ isLoading: true })
+        try {
+          const response = await api.post('/auth/demo')
           const { user, token } = response.data
           
           // Store token in cookie

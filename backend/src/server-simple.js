@@ -58,11 +58,28 @@ app.get('/', (req, res) => {
       '/health', 
       '/api/auth/login', 
       '/api/auth/register', 
+      '/api/auth/demo',
       '/api/calendar',
       '/api/projects',
       '/api/focus',
       '/api/courses'
     ]
+  });
+});
+
+// Demo session endpoint - generates a unique session without login
+app.post('/api/auth/demo', (req, res) => {
+  const sessionId = Date.now() + Math.floor(Math.random() * 1000000);
+  const demoUser = {
+    id: sessionId,
+    email: `demo-${sessionId}@zenith.app`,
+    name: 'Demo User',
+    created_at: new Date().toISOString()
+  };
+  
+  res.json({
+    user: { id: demoUser.id, email: demoUser.email, name: demoUser.name },
+    token: `session-${sessionId}`
   });
 });
 
