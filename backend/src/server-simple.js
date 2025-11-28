@@ -83,6 +83,36 @@ app.post('/api/auth/demo', (req, res) => {
   });
 });
 
+// Admin endpoint to view all users (for debugging)
+app.get('/api/admin/users', (req, res) => {
+  res.json({
+    total: users.length,
+    users: users.map(u => ({
+      id: u.id,
+      email: u.email,
+      name: u.name,
+      created_at: u.created_at
+    }))
+  });
+});
+
+// Admin endpoint to view all data (for debugging)
+app.get('/api/admin/stats', (req, res) => {
+  res.json({
+    users: users.length,
+    calendar_events: calendar_events.length,
+    projects: projects.length,
+    focus_sessions: focus_sessions.length,
+    courses: courses.length,
+    data: {
+      users: users.map(u => ({ id: u.id, email: u.email, name: u.name })),
+      calendar_events: calendar_events.length,
+      projects: projects.length,
+      courses: courses.length
+    }
+  });
+});
+
 // Auth routes
 app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
