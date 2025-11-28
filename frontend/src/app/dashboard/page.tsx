@@ -17,7 +17,7 @@ import { api } from "@/lib/api";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, startDemoSession } = useAuthStore();
+  const { user, initializeSession } = useAuthStore();
   const [stats, setStats] = useState({
     upcomingEvents: 0,
     activeProjects: 0,
@@ -26,18 +26,12 @@ export default function DashboardPage() {
   });
 
   useEffect(() => {
-    // Auto-start demo session if no user
-    const initSession = async () => {
-      if (!user) {
-        try {
-          await startDemoSession();
-        } catch (error) {
-          console.error('Failed to start demo session:', error);
-        }
-      }
+    // Initialize session and load stats
+    const init = async () => {
+      await initializeSession();
       loadDashboardStats();
     };
-    initSession();
+    init();
   }, []);
 
   const loadDashboardStats = async () => {

@@ -16,6 +16,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>
   register: (name: string, email: string, password: string) => Promise<void>
   startDemoSession: () => Promise<void>
+  initializeSession: () => Promise<void>
   logout: () => void
   setUser: (user: User) => void
 }
@@ -68,6 +69,13 @@ export const useAuthStore = create<AuthState>()(
       },
       
       startDemoSession: async () => {
+        // Only create new session if no token exists
+        const existingToken = Cookies.get('token')
+        if (existingToken) {
+          // Already have a session, don't create new one
+          return
+        }
+        
         set({ isLoading: true })
         try {
           const response = await api.post('/auth/demo')
@@ -85,6 +93,21 @@ export const useAuthStore = create<AuthState>()(
           set({ isLoading: false })
           throw error
         }
+      },
+      
+      initializeSession: async () => {
+        const token = Cookies.get('token')
+        const state = useAuthStore.getState()
+        
+        if (!token && !state.user) {
+          // No token and no user - start fresh demo session
+          try {
+            await state.startDemoSession()
+          } catch (error) {
+            console.error('Failed to start demo session:', error)
+          }
+        }
+        // If we have a token, the API will use it automatically
       },
       
       logout: () => {
