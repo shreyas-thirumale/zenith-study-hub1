@@ -166,11 +166,3 @@ For Google OAuth, add your Vercel deployment URL to the **Redirect URLs** list i
 
 MIT License — see the LICENSE file for details.
 
----
-
-## 🙏 Acknowledgments
-
-- [Next.js](https://nextjs.org/)
-- [Supabase](https://supabase.com/)
-- [shadcn/ui](https://ui.shadcn.com/)
-- [Lucide](https://lucide.dev/)
