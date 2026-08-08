@@ -43,7 +43,7 @@ export default function CalendarPage() {
     await createEvent.mutateAsync({
       ...formData,
       course_id: formData.course_id && formData.course_id !== 'none'
-        ? (parseInt(formData.course_id) as unknown as undefined) : undefined,
+        ? formData.course_id : undefined,
     } as any)
     setIsDialogOpen(false)
     setFormData(EMPTY_FORM)

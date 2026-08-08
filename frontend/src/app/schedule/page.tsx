@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Plus, Trash2, BookOpen } from 'lucide-react'
 import { WeeklyView } from '@/components/weekly-view'
 import { Navbar } from '@/components/navbar'
-import { useCourses, useEvents, useCreateCourse, useUpdateCourse, useDeleteCourse, type Course } from '@/lib/queries'
+import { useCourses, useEvents, useProjects, useCreateCourse, useUpdateCourse, useDeleteCourse, type Course } from '@/lib/queries'
 
 const DAY_OPTIONS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const EMPTY_FORM = { name: '', code: '', color: '#6366f1', days: [] as string[], start_time: '', end_time: '', location: '' }
@@ -29,11 +29,12 @@ export default function SchedulePage() {
 
   const { data: courses = [], isLoading: coursesLoading } = useCourses()
   const { data: events = [], isLoading: eventsLoading } = useEvents()
+  const { data: projects = [], isLoading: projectsLoading } = useProjects()
   const createCourse = useCreateCourse()
   const updateCourse = useUpdateCourse()
   const deleteCourse = useDeleteCourse()
 
-  const isLoading = coursesLoading || eventsLoading
+  const isLoading = coursesLoading || eventsLoading || projectsLoading
 
   const openAddCourse = () => {
     setEditingCourse(null)
@@ -99,6 +100,7 @@ export default function SchedulePage() {
                 <WeeklyView
                   courses={courses}
                   events={events}
+                  projects={projects}
                   currentWeekStart={weekStart}
                   onPrevWeek={() => setWeekStart(w => { const d = new Date(w); d.setDate(d.getDate() - 7); return d })}
                   onNextWeek={() => setWeekStart(w => { const d = new Date(w); d.setDate(d.getDate() + 7); return d })}

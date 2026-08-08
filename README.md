@@ -1,8 +1,8 @@
 # 🎓 Zenith Study Hub
 
-A comprehensive student productivity platform for managing academic life, featuring calendar management, project tracking, focus sessions, and course organization.
+A student productivity platform for managing academic life — featuring calendar management, project tracking, focus sessions, and course organization.
 
-![Status](https://img.shields.io/badge/status-ready%20for%20deployment-brightgreen)
+![Status](https://img.shields.io/badge/status-active-brightgreen)
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
@@ -13,70 +13,70 @@ A comprehensive student productivity platform for managing academic life, featur
 ### 📅 Smart Calendar
 - Create and manage academic events (assignments, exams, readings)
 - Color-coded by course
-- Date range filtering
-- Quick event creation
+- Date range filtering and quick event creation
 
 ### 📚 Course Management
-- Add and organize courses
-- Custom color coding
-- Course-specific tracking
+- Add and organize courses with custom color coding
+- Track meeting days, times, and locations
 
 ### 📋 Project Tracker
-- Track group projects and assignments
-- Progress monitoring
-- Due date management
-- Status tracking (active, completed, archived)
+- Track group projects and assignments with task breakdowns
+- Progress monitoring, due dates, and status tracking (active, completed, archived)
 
 ### 🎯 Focus Mode
-- Pomodoro-style focus sessions
-- Track study time by course
-- Session history and statistics
-- Productivity analytics
+- Pomodoro-style focus sessions tied to courses
+- Session history, study time tracking, and weekly productivity stats
 
-### 📄 Syllabus Parser (Coming Soon)
-- Upload PDF syllabi
-- Automatic event extraction
-- Bulk calendar import
+### 📄 Syllabus Parser *(Coming Soon)*
+- Upload PDF syllabi for automatic event extraction and bulk calendar import
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
-- npm or yarn
+- Node.js 18+
+- A [Supabase](https://supabase.com) project
 
-### Installation
+### 1. Clone the repo
 
 ```bash
-# Clone the repository
 git clone https://github.com/yourusername/zenith-study-hub.git
-cd zenith-study-hub
-
-# Install backend dependencies
-cd backend
-npm install
-
-# Install frontend dependencies
-cd ../frontend
+cd zenith-study-hub/frontend
 npm install
 ```
 
-### Running Locally
+### 2. Configure environment variables
 
-**Backend (Terminal 1):**
+Create a `.env.local` file in the `frontend/` directory:
+
 ```bash
-cd backend
-npm run dev
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
-Server will start on http://localhost:3333 (or next available port)
 
-**Frontend (Terminal 2):**
+You can find these in your Supabase project under **Settings → API**.
+
+### 3. Set up the database
+
+Run the migration files in order against your Supabase project (via the SQL editor or `psql`):
+
+```
+database/migrations/001_create_users.sql
+database/migrations/002_create_courses.sql
+database/migrations/003_create_calendar_events.sql
+database/migrations/004_create_projects.sql
+database/migrations/005_create_focus_sessions.sql
+```
+
+### 4. Run locally
+
 ```bash
 cd frontend
 npm run dev
 ```
-App will open at http://localhost:3000
+
+App will be available at http://localhost:3000
 
 ---
 
@@ -84,188 +84,93 @@ App will open at http://localhost:3000
 
 ```
 zenith-study-hub/
-├── backend/                    # Express.js API server
-│   ├── src/
-│   │   ├── server-simple.js   # Mock server (no database)
-│   │   ├── server.js          # Production server (with database)
-│   │   ├── routes/            # API route handlers
-│   │   ├── middleware/        # Auth & validation
-│   │   └── config/            # Database configuration
-│   ├── package.json
-│   └── README.md
-│
 ├── frontend/                   # Next.js 14 application
 │   ├── src/
-│   │   ├── app/               # App router pages
-│   │   ├── components/        # React components
-│   │   ├── lib/               # Utilities & API client
-│   │   └── hooks/             # Custom React hooks
-│   ├── package.json
-│   └── tailwind.config.js
+│   │   ├── app/               # App Router pages
+│   │   ├── components/        # Reusable UI components
+│   │   ├── lib/               # Supabase client, queries, utilities
+│   │   └── store/             # Zustand auth store
+│   └── package.json
 │
-├── DEPLOYMENT.md              # Deployment guide
-└── README.md                  # This file
+├── database/
+│   └── migrations/            # SQL migration files
+│
+└── backend/                   # Legacy Express server (not used in production)
 ```
 
 ---
 
 ## 🛠️ Tech Stack
 
-### Frontend
-- **Next.js 14** - React framework with App Router
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Utility-first CSS
-- **Shadcn/ui** - Component library
-- **Lucide React** - Icons
-- **date-fns** - Date manipulation
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 14 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS + shadcn/ui |
+| Auth & Database | Supabase (PostgreSQL + Auth + Realtime) |
+| Data fetching | TanStack Query v5 |
+| State management | Zustand |
+| Forms | React Hook Form + Zod |
+| Icons | Lucide React |
 
-### Backend
-- **Express.js** - Web framework
-- **Node.js** - Runtime
-- **JWT** - Authentication
-- **bcrypt** - Password hashing
-- **Knex.js** - SQL query builder (production)
-- **PostgreSQL** - Database (production)
-
-### Development
-- **Mock Mode** - No database required for development
-- **Hot Reload** - Instant updates during development
-- **ESLint** - Code linting
-- **Jest** - Testing framework
+### Architecture notes
+- The frontend communicates **directly with Supabase** — no separate backend server is required.
+- **Realtime** updates are enabled via Supabase Postgres Changes, which automatically invalidates the TanStack Query cache across open tabs.
+- Auth supports **email/password** and **Google OAuth** via Supabase Auth.
 
 ---
 
-## 🎯 API Endpoints
+## 🔒 Security
 
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-
-### Calendar
-- `GET /api/calendar` - Get all events
-- `POST /api/calendar` - Create event
-- `PUT /api/calendar/:id` - Update event
-- `DELETE /api/calendar/:id` - Delete event
-
-### Courses
-- `GET /api/courses` - Get all courses
-- `POST /api/courses` - Create course
-- `PUT /api/courses/:id` - Update course
-- `DELETE /api/courses/:id` - Delete course
-
-### Projects
-- `GET /api/projects` - Get all projects
-- `POST /api/projects` - Create project
-- `PUT /api/projects/:id` - Update project
-- `DELETE /api/projects/:id` - Delete project
-
-### Focus Sessions
-- `GET /api/focus/sessions` - Get session history
-- `POST /api/focus/start` - Start session
-- `POST /api/focus/:id/end` - End session
-- `GET /api/focus/stats` - Get statistics
-
-See [backend/README.md](backend/README.md) for detailed API documentation.
+- Row-Level Security (RLS) on all Supabase tables ensures users can only access their own data.
+- Auth state is managed via Supabase's built-in session handling with auto token refresh.
+- The anon key is safe to expose client-side — RLS policies are the access control layer.
 
 ---
 
 ## 🚢 Deployment
 
-### Quick Deploy
+The frontend can be deployed to **Vercel** in one step:
 
-**Backend to Render:**
 1. Push to GitHub
-2. Connect repository on [render.com](https://render.com)
-3. Deploy as Web Service
-4. Copy API URL
+2. Import the project on [vercel.com](https://vercel.com) pointing to the `frontend/` directory
+3. Add environment variables:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. Deploy
 
-**Frontend to Vercel:**
-1. Update API URL in `frontend/src/lib/api.ts`
-2. Push to GitHub
-3. Import project on [vercel.com](https://vercel.com)
-4. Add environment variable: `NEXT_PUBLIC_API_URL`
-5. Deploy
-
-See [DEPLOYMENT.md](DEPLOYMENT.md) for complete deployment guide.
-
----
-
-## 🧪 Testing
-
-```bash
-# Backend tests
-cd backend
-npm test
-
-# Frontend tests (if configured)
-cd frontend
-npm test
-```
-
----
-
-## 🔒 Security Features
-
-- JWT-based authentication
-- Password hashing with bcrypt (12 rounds)
-- Helmet.js security headers
-- CORS configuration
-- Input validation
-- User data isolation
-- SQL injection prevention
+For Google OAuth, add your Vercel deployment URL to the **Redirect URLs** list in Supabase under **Authentication → URL Configuration**.
 
 ---
 
 ## 📝 Environment Variables
 
-### Backend (.env)
-```bash
-PORT=5000
-NODE_ENV=development
-JWT_SECRET=your-secret-key
-JWT_EXPIRES_IN=7d
-```
-
-### Frontend (.env.local)
-```bash
-NEXT_PUBLIC_API_URL=http://localhost:3333/api
-```
+| Variable | Description |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase project anon/public key |
 
 ---
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit your changes (`git commit -m 'Add your feature'`)
+4. Push to the branch (`git push origin feature/your-feature`)
 5. Open a Pull Request
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT License — see the LICENSE file for details.
 
 ---
 
 ## 🙏 Acknowledgments
 
-- Built with [Next.js](https://nextjs.org/)
-- UI components from [shadcn/ui](https://ui.shadcn.com/)
-- Icons from [Lucide](https://lucide.dev/)
-
----
-
-## 📧 Contact
-
-For questions or support, please open an issue on GitHub.
-
----
-
-## 🎉 Ready to Deploy!
-
-Your Zenith Study Hub is ready for deployment. Follow the [DEPLOYMENT.md](DEPLOYMENT.md) guide to get it live!
-
-**Happy Studying! 📚✨**
-# zenith-study-hub1
+- [Next.js](https://nextjs.org/)
+- [Supabase](https://supabase.com/)
+- [shadcn/ui](https://ui.shadcn.com/)
+- [Lucide](https://lucide.dev/)

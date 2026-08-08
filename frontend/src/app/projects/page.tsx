@@ -34,7 +34,7 @@ export default function ProjectsPage() {
     if (!formData.name.trim()) return;
     await createProject.mutateAsync({
       ...formData,
-      course_id: formData.course_id && formData.course_id !== "none" ? parseInt(formData.course_id) as any : null,
+      course_id: formData.course_id && formData.course_id !== "none" ? formData.course_id : null,
       due_date: formData.due_date || undefined,
     });
     setIsCreateDialogOpen(false);
@@ -47,7 +47,7 @@ export default function ProjectsPage() {
       id: selectedProject.id,
       data: {
         ...formData,
-        course_id: formData.course_id && formData.course_id !== "none" ? parseInt(formData.course_id) as any : null,
+        course_id: formData.course_id && formData.course_id !== "none" ? formData.course_id : null,
         due_date: formData.due_date || undefined,
       },
     });

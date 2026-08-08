@@ -4,8 +4,10 @@ import { useRef, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from './ui/button'
 
+import { Flag } from 'lucide-react'
+
 interface Course {
-  id: number
+  id: string
   name: string
   code: string
   color: string
@@ -16,18 +18,26 @@ interface Course {
 }
 
 interface CalendarEvent {
-  id: number
+  id: string
   title: string
   date: string
   time?: string
   type: string
   description?: string
-  course_id?: number
+  course_id?: string
+}
+
+interface Project {
+  id: string
+  name: string
+  due_date?: string
+  status: string
 }
 
 interface WeeklyViewProps {
   courses: Course[]
   events: CalendarEvent[]
+  projects?: Project[]
   currentWeekStart: Date
   onPrevWeek: () => void
   onNextWeek: () => void
@@ -68,6 +78,7 @@ const EVENT_TYPE_COLORS: Record<string, string> = {
 export function WeeklyView({
   courses,
   events,
+  projects = [],
   currentWeekStart,
   onPrevWeek,
   onNextWeek,
@@ -128,12 +139,15 @@ export function WeeklyView({
         <div className="w-32" />
       </div>
 
-      {/* Day header row */}
+      {/* Day header row — includes deadline badges */}
       <div className="flex border-b border-border/50">
         <div className="w-14 shrink-0" />
         {weekDays.map((day, i) => {
           const dateStr = day.toISOString().split('T')[0]
           const isToday = dateStr === todayStr
+          const dayDeadlines = projects.filter(
+            p => p.due_date === dateStr && p.status !== 'archived'
+          )
           return (
             <div key={i} className="flex-1 text-center py-2 border-l border-border/30">
               <div className="text-xs text-muted-foreground font-medium">
@@ -145,6 +159,21 @@ export function WeeklyView({
               `}>
                 {day.getDate()}
               </div>
+              {/* Deadline badges in header */}
+              {dayDeadlines.length > 0 && (
+                <div className="mt-1 space-y-0.5 px-1">
+                  {dayDeadlines.map(p => (
+                    <div
+                      key={p.id}
+                      className="flex items-center gap-1 text-[10px] bg-destructive/15 border border-destructive/30 text-destructive rounded px-1 py-0.5 truncate"
+                      title={`Due: ${p.name}`}
+                    >
+                      <Flag className="h-2.5 w-2.5 shrink-0" />
+                      <span className="truncate">{p.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )
         })}
