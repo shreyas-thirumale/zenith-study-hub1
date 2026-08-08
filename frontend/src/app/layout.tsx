@@ -10,7 +10,10 @@ const exo2 = Exo_2({
 })
 
 export const metadata: Metadata = {
-  title: 'Zenith Study Hub',
+  title: {
+    template: '%s – Zenith Study Hub',
+    default: 'Zenith Study Hub',
+  },
   description: 'The all-in-one student productivity suite',
 }
 
