@@ -27,7 +27,7 @@ A student productivity platform for managing academic life — featuring calenda
 - Pomodoro-style focus sessions tied to courses
 - Session history, study time tracking, and weekly productivity stats
 
-### 📄 Syllabus Parser *(Coming Soon)*
+### 📄 Syllabus Parser *(To Be Implemented)*
 - Upload PDF syllabi for automatic event extraction and bulk calendar import
 
 ---
