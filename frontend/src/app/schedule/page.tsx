@@ -113,7 +113,7 @@ export default function SchedulePage() {
             <div className="w-64 shrink-0 space-y-3 animate-slide-left">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">Classes</h3>
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={openAddCourse}>
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={openAddCourse} aria-label="Add class">
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
@@ -140,6 +140,7 @@ export default function SchedulePage() {
                         </div>
                       </div>
                       <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                        aria-label={`Delete ${course.name}`}
                         onClick={e => { e.stopPropagation(); deleteCourse.mutate(course.id) }}>
                         <Trash2 className="h-3 w-3 text-destructive" />
                       </Button>

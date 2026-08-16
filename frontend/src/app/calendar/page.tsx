@@ -11,12 +11,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Calendar, Plus, Trash2 } from 'lucide-react'
 import { CalendarView } from '@/components/calendar-view'
 import { Navbar } from '@/components/navbar'
-import { useQueryClient } from '@tanstack/react-query'
 import {
   useEvents, useCourses, useCreateEvent, useDeleteEvent,
-  queryKeys, type CalendarEvent,
 } from '@/lib/queries'
-import { api } from '@/lib/api'
 import toast from 'react-hot-toast'
 
 const EMPTY_FORM = {
@@ -32,7 +29,6 @@ export default function CalendarPage() {
   const { data: courses = [] } = useCourses()
   const createEvent = useCreateEvent()
   const deleteEvent = useDeleteEvent()
-  const qc = useQueryClient()
 
   const handleAddEvent = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -124,6 +120,7 @@ export default function CalendarPage() {
                           <Button
                             variant="ghost" size="sm"
                             className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                            aria-label={`Delete ${event.title}`}
                             onClick={() => deleteEvent.mutate(event.id)}
                           >
                             <Trash2 className="h-3 w-3 text-destructive" />

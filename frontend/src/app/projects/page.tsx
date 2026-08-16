@@ -34,7 +34,7 @@ export default function ProjectsPage() {
     if (!formData.name.trim()) return;
     await createProject.mutateAsync({
       ...formData,
-      course_id: formData.course_id && formData.course_id !== "none" ? formData.course_id : null,
+      course_id: formData.course_id && formData.course_id !== "none" ? formData.course_id : undefined,
       due_date: formData.due_date || undefined,
     });
     setIsCreateDialogOpen(false);
@@ -47,7 +47,7 @@ export default function ProjectsPage() {
       id: selectedProject.id,
       data: {
         ...formData,
-        course_id: formData.course_id && formData.course_id !== "none" ? formData.course_id : null,
+        course_id: formData.course_id && formData.course_id !== "none" ? formData.course_id : undefined,
         due_date: formData.due_date || undefined,
       },
     });
@@ -170,6 +170,7 @@ export default function ProjectsPage() {
                         <Edit className="h-4 w-4 mr-1" />Edit
                       </Button>
                       <Button variant="destructive" size="sm" className="hover-lift"
+                        aria-label={`Delete ${project.name}`}
                         onClick={() => deleteProject.mutate(project.id)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>

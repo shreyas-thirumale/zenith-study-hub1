@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from './ui/button'
 
 interface CalendarEvent {
-  id: number
+  id: string
   title: string
   date: string
   type: string
@@ -102,6 +102,7 @@ export function CalendarView({ events, onDateClick, selectedDate }: CalendarView
             size="sm"
             onClick={previousMonth}
             className="hover-lift"
+            aria-label="Previous month"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -110,6 +111,7 @@ export function CalendarView({ events, onDateClick, selectedDate }: CalendarView
             size="sm"
             onClick={nextMonth}
             className="hover-lift"
+            aria-label="Next month"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>

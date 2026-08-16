@@ -13,7 +13,7 @@ import { Eye, EyeOff, GraduationCap } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
-  const { signInWithEmail, signInWithGoogle, isLoading } = useAuthStore()
+  const { signInWithEmail, signInWithGoogle } = useAuthStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -101,6 +101,7 @@ export default function LoginPage() {
                     onChange={e => setPassword(e.target.value)} required />
                   <Button type="button" variant="ghost" size="sm"
                     className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                     onClick={() => setShowPassword(s => !s)}>
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>

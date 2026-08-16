@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Play, Pause, Square, Clock, TrendingUp } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { useFocusSessions, useFocusStats, useStartFocusSession, useEndFocusSession, type FocusSession } from "@/lib/queries";
-import toast from "react-hot-toast";
 
 export default function FocusPage() {
   const [activeSession, setActiveSession] = useState<FocusSession | null>(null);
@@ -37,7 +36,7 @@ export default function FocusPage() {
     setIsRunning(true);
   };
 
-  const endSession = async (sessionId: number) => {
+  const endSession = async (sessionId: string) => {
     await endMutation.mutateAsync(sessionId);
     setActiveSession(null);
     setTimer(0);

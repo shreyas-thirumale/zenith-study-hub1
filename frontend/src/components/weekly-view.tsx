@@ -1,10 +1,8 @@
 'use client'
 
 import { useRef, useEffect } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Flag } from 'lucide-react'
 import { Button } from './ui/button'
-
-import { Flag } from 'lucide-react'
 
 interface Course {
   id: string
@@ -30,7 +28,7 @@ interface CalendarEvent {
 interface Project {
   id: string
   name: string
-  due_date?: string
+  due_date?: string | undefined
   status: string
 }
 
@@ -128,10 +126,10 @@ export function WeeklyView({
           <Button variant="outline" size="sm" onClick={onToday} className="hover-lift text-xs px-3">
             Today
           </Button>
-          <Button variant="outline" size="icon" className="h-8 w-8 hover-lift" onClick={onPrevWeek}>
+          <Button variant="outline" size="icon" className="h-8 w-8 hover-lift" onClick={onPrevWeek} aria-label="Previous week">
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="icon" className="h-8 w-8 hover-lift" onClick={onNextWeek}>
+          <Button variant="outline" size="icon" className="h-8 w-8 hover-lift" onClick={onNextWeek} aria-label="Next week">
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

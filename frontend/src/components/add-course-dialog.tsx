@@ -52,7 +52,6 @@ export function AddCourseDialog({ onCourseAdded }: AddCourseDialogProps) {
       setIsOpen(false);
       setFormData({ name: "", code: "", color: "#6B7280" });
     } catch (error: any) {
-      console.error("Error adding course:", error);
       toast.error(error.response?.data?.error || "Failed to add course");
     } finally {
       setIsSubmitting(false);

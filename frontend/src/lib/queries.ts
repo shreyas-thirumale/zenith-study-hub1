@@ -28,9 +28,9 @@ export interface Project {
   id: string
   name: string
   description?: string
-  course_id?: string
+  course_id?: string | undefined
   course_name?: string
-  due_date?: string
+  due_date?: string | undefined
   status: string
   progress: number
 }
@@ -216,7 +216,6 @@ export function useCreateEvent() {
         .select()
         .single()
       if (error) {
-        console.error('Supabase insert error:', error)
         throw error
       }
       return event
@@ -228,7 +227,6 @@ export function useCreateEvent() {
       toast.success('Event added!')
     },
     onError: (err: any) => {
-      console.error('Create event error:', err)
       toast.error(err?.message ?? 'Failed to add event')
     },
   })
